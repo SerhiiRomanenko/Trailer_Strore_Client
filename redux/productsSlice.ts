@@ -83,7 +83,6 @@ const productsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Fetch Products
       .addCase(fetchProducts.pending, (state) => {
         state.status = "loading";
       })
@@ -98,14 +97,12 @@ const productsSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       })
-      // Add Product
       .addCase(
         addProduct.fulfilled,
         (state, action: PayloadAction<Product>) => {
           state.list.push(action.payload);
         }
       )
-      // Update Product
       .addCase(
         updateProduct.fulfilled,
         (state, action: PayloadAction<Product>) => {
@@ -115,7 +112,6 @@ const productsSlice = createSlice({
           }
         }
       )
-      // Delete Product
       .addCase(
         deleteProduct.fulfilled,
         (state, action: PayloadAction<string>) => {

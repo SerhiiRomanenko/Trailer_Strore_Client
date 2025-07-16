@@ -89,7 +89,7 @@ const MyProfilePage: React.FC = () => {
     "w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors";
 
   if (authLoading || !currentUser) {
-    return <div>Loading...</div>; // Or a spinner
+    return <div>Loading...</div>;
   }
 
   return (
@@ -181,7 +181,6 @@ const MyProfilePage: React.FC = () => {
         </form>
       </div>
 
-      {/* Change Password Form */}
       <div className="bg-white p-8 rounded-xl shadow-lg border border-slate-200">
         <h2 className="text-2xl font-bold text-slate-800 mb-6">Зміна пароля</h2>
         <form onSubmit={handlePasswordSubmit} className="space-y-6">

@@ -14,7 +14,6 @@ interface AdminPageProps {
 
 const AdminPage: React.FC<AdminPageProps> = ({ route }) => {
   const renderContent = () => {
-    // Product (Trailer) Routes
     if (route === "/admin/product/new") {
       return <AdminProductForm productType="Причепи" />;
     }
@@ -23,7 +22,6 @@ const AdminPage: React.FC<AdminPageProps> = ({ route }) => {
       return <AdminProductForm productId={productId} productType="Причепи" />;
     }
 
-    // Accessory Routes
     if (route === "/admin/accessory/new") {
       return <AdminProductForm productType="Комплектуючі" />;
     }
@@ -34,7 +32,6 @@ const AdminPage: React.FC<AdminPageProps> = ({ route }) => {
       );
     }
 
-    // User Routes
     if (route.startsWith("/admin/user/edit/")) {
       const userId = route.split("/")[4];
       return <AdminUserForm userId={userId} />;

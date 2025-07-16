@@ -41,7 +41,7 @@ const MyOrdersPage: React.FC = () => {
   }
 
   if (!currentUser) {
-    return null; // Redirect is handled by useEffect
+    return null;
   }
 
   const handleNav = (e: React.MouseEvent, path: string) => {

@@ -250,7 +250,6 @@ const Header: React.FC<HeaderProps> = ({ route }) => {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
       <div
         className={`md:hidden bg-slate-900 shadow-lg transition-all duration-300 ease-in-out overflow-y-hidden ${
           isMobileMenuOpen ? "max-h-[80vh]" : "max-h-0"

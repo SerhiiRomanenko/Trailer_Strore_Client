@@ -1,0 +1,476 @@
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addProduct, updateProduct } from "../../redux/productsSlice";
+import { Product, Specification } from "../../types";
+import { RootState, AppDispatch } from "../../redux/store";
+import Button from "../Button";
+import TrashIcon from "../icons/TrashIcon";
+
+interface AdminProductFormProps {
+  productId?: string;
+  productType: "Причепи" | "Комплектуючі";
+}
+
+const getInitialProductState = (
+  productType: "Причепи" | "Комплектуючі"
+): Omit<Product, "id" | "slug" | "createdAt" | "updatedAt"> => ({
+  name: "",
+  description: "",
+  shortDescription: "",
+  sku: "",
+  brand: "",
+  model: "",
+  category: productType,
+  subCategory: productType === "Причепи" ? "Легкові причепи" : "",
+  type: productType === "Причепи" ? "product" : "spare_part",
+  price: 0,
+  currency: "UAH",
+  inStock: true,
+  quantity: 0,
+  images: [""],
+  specifications: [{ name: "", value: "", unit: "" }],
+  compatibility: [],
+  metaTitle: "",
+  metaDescription: "",
+  keywords: [],
+  isFeatured: false,
+});
+
+const AdminProductForm: React.FC<AdminProductFormProps> = ({
+  productId,
+  productType,
+}) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const productToEdit = useSelector((state: RootState) =>
+    state.products.list.find((p) => p.id === productId)
+  );
+
+  const [product, setProduct] = useState(() =>
+    getInitialProductState(productType)
+  );
+
+  const navigate = (path: string) => {
+    const targetPath =
+      productType === "Причепи" ? "/admin/products" : "/admin/accessories";
+    window.history.pushState({}, "", targetPath);
+    window.dispatchEvent(new Event("locationchange"));
+  };
+
+  useEffect(() => {
+    if (productToEdit) {
+      setProduct({
+        ...productToEdit,
+        keywords: productToEdit.keywords || [],
+        images: productToEdit.images.length > 0 ? productToEdit.images : [""],
+        specifications:
+          productToEdit.specifications.length > 0
+            ? productToEdit.specifications
+            : [{ name: "", value: "", unit: "" }],
+      });
+    } else {
+      setProduct(getInitialProductState(productType));
+    }
+  }, [productToEdit, productType]);
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value, type } = e.target;
+
+    if (type === "checkbox") {
+      const { checked } = e.target as HTMLInputElement;
+      setProduct((prev) => ({ ...prev, [name]: checked }));
+    } else {
+      setProduct((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleSpecChange = (
+    index: number,
+    field: keyof Specification,
+    value: string
+  ) => {
+    const newSpecs = [...product.specifications];
+    newSpecs[index] = { ...newSpecs[index], [field]: value };
+    setProduct((prev) => ({ ...prev, specifications: newSpecs }));
+  };
+
+  const addSpec = () => {
+    setProduct((prev) => ({
+      ...prev,
+      specifications: [
+        ...prev.specifications,
+        { name: "", value: "", unit: "" },
+      ],
+    }));
+  };
+
+  const removeSpec = (index: number) => {
+    const newSpecs = product.specifications.filter((_, i) => i !== index);
+    setProduct((prev) => ({ ...prev, specifications: newSpecs }));
+  };
+
+  const handleImageChange = (index: number, value: string) => {
+    const newImages = [...product.images];
+    newImages[index] = value;
+    setProduct((prev) => ({ ...prev, images: newImages }));
+  };
+
+  const addImage = () => {
+    setProduct((prev) => ({ ...prev, images: [...prev.images, ""] }));
+  };
+
+  const removeImage = (index: number) => {
+    const newImages = product.images.filter((_, i) => i !== index);
+    setProduct((prev) => ({
+      ...prev,
+      images: newImages.length > 0 ? newImages : [""],
+    }));
+  };
+
+  const handleFileChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleImageChange(index, reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const finalProductData = {
+      ...product,
+      price: Number(product.price),
+      quantity: Number(product.quantity),
+      keywords: Array.isArray(product.keywords)
+        ? product.keywords
+        : (product.keywords as any).split(",").map((k: string) => k.trim()),
+      images: product.images.filter((img) => img.trim() !== ""), // Remove empty image fields before saving
+    };
+
+    if (productId && productToEdit) {
+      dispatch(updateProduct({ ...productToEdit, ...finalProductData }));
+    } else {
+      const slug = finalProductData.name
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, "-")
+        .replace(/--+/g, "-");
+      const newProductData = {
+        ...finalProductData,
+        slug,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      // @ts-ignore
+      dispatch(addProduct(newProductData));
+    }
+    navigate(
+      productType === "Причепи" ? "/admin/products" : "/admin/accessories"
+    );
+  };
+
+  const inputClass =
+    "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500";
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">
+        {productId ? "Редагувати товар" : "Додати новий товар"}
+      </h1>
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-8 bg-white p-8 rounded-lg shadow-sm border border-gray-200"
+      >
+        {/* Main Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Назва
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={product.name}
+              onChange={handleChange}
+              className={inputClass}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Бренд
+            </label>
+            <input
+              type="text"
+              name="brand"
+              value={product.brand}
+              onChange={handleChange}
+              className={inputClass}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Модель
+            </label>
+            <input
+              type="text"
+              name="model"
+              value={product.model}
+              onChange={handleChange}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Категорія
+            </label>
+            <input
+              type="text"
+              name="category"
+              value={product.category}
+              readOnly
+              className={`${inputClass} bg-gray-100`}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Ціна (UAH)
+            </label>
+            <input
+              type="number"
+              name="price"
+              value={product.price}
+              onChange={handleChange}
+              className={inputClass}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Кількість на складі
+            </label>
+            <input
+              type="number"
+              name="quantity"
+              value={product.quantity}
+              onChange={handleChange}
+              className={inputClass}
+              required
+            />
+          </div>
+        </div>
+
+        {/* Descriptions */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Короткий опис
+          </label>
+          <textarea
+            name="shortDescription"
+            value={product.shortDescription}
+            onChange={handleChange}
+            rows={2}
+            className={inputClass}
+          ></textarea>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Повний опис (HTML)
+          </label>
+          <textarea
+            name="description"
+            value={product.description}
+            onChange={handleChange}
+            rows={5}
+            className={inputClass}
+          ></textarea>
+        </div>
+
+        {/* Images */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Зображення
+          </label>
+          {product.images.map((img, index) => (
+            <div key={index} className="flex items-center gap-2 mb-2">
+              <input
+                type="text"
+                value={img}
+                onChange={(e) => handleImageChange(index, e.target.value)}
+                className={`${inputClass} flex-grow`}
+                placeholder="Вставте URL або завантажте файл"
+              />
+              <label className="cursor-pointer whitespace-nowrap text-sm font-medium text-amber-600 hover:text-amber-500 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 transition-colors">
+                <span>Завантажити</span>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={(e) => handleFileChange(index, e)}
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => removeImage(index)}
+                className="p-2 text-gray-500 hover:text-red-600 rounded-full hover:bg-red-100"
+              >
+                <TrashIcon className="h-5 w-5" />
+              </button>
+            </div>
+          ))}
+          <Button type="button" variant="secondary" onClick={addImage}>
+            Додати зображення
+          </Button>
+        </div>
+
+        {/* Specifications */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Специфікації
+          </label>
+          {product.specifications.map((spec, index) => (
+            <div
+              key={index}
+              className="grid grid-cols-1 md:grid-cols-4 gap-2 mb-2 items-center"
+            >
+              <input
+                type="text"
+                placeholder="Назва"
+                value={spec.name}
+                onChange={(e) =>
+                  handleSpecChange(index, "name", e.target.value)
+                }
+                className={inputClass}
+              />
+              <input
+                type="text"
+                placeholder="Значення"
+                value={spec.value}
+                onChange={(e) =>
+                  handleSpecChange(index, "value", e.target.value)
+                }
+                className={inputClass}
+              />
+              <input
+                type="text"
+                placeholder="Одиниця"
+                value={spec.unit || ""}
+                onChange={(e) =>
+                  handleSpecChange(index, "unit", e.target.value)
+                }
+                className={inputClass}
+              />
+              <button
+                type="button"
+                onClick={() => removeSpec(index)}
+                className="p-2 text-gray-500 hover:text-red-600 rounded-full hover:bg-red-100 justify-self-start"
+              >
+                <TrashIcon className="h-5 w-5" />
+              </button>
+            </div>
+          ))}
+          <Button type="button" variant="secondary" onClick={addSpec}>
+            Додати специфікацію
+          </Button>
+        </div>
+
+        {/* SEO and Flags */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Meta Title
+            </label>
+            <input
+              type="text"
+              name="metaTitle"
+              value={product.metaTitle}
+              onChange={handleChange}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Meta Description
+            </label>
+            <input
+              type="text"
+              name="metaDescription"
+              value={product.metaDescription}
+              onChange={handleChange}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Ключові слова (через кому)
+            </label>
+            <input
+              type="text"
+              name="keywords"
+              value={
+                Array.isArray(product.keywords)
+                  ? product.keywords.join(", ")
+                  : product.keywords
+              }
+              onChange={handleChange}
+              className={inputClass}
+            />
+          </div>
+          <div className="flex items-center gap-10">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                name="inStock"
+                checked={product.inStock}
+                onChange={handleChange}
+                className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+              />{" "}
+              В наявності
+            </label>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                name="isFeatured"
+                checked={product.isFeatured}
+                onChange={handleChange}
+                className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+              />{" "}
+              Рекомендований
+            </label>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-4 mt-8">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() =>
+              navigate(
+                productType === "Причепи"
+                  ? "/admin/products"
+                  : "/admin/accessories"
+              )
+            }
+          >
+            Скасувати
+          </Button>
+          <Button type="submit" variant="primary">
+            {productId ? "Оновити товар" : "Створити товар"}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default AdminProductForm;

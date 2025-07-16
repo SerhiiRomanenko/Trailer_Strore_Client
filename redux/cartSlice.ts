@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Product } from '../types';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Product } from "../types";
 
 export interface CartItem extends Product {
   quantity: number;
@@ -11,14 +11,13 @@ interface CartState {
 
 const loadFromLocalStorage = (): CartItem[] => {
   try {
-    const serializedState = localStorage.getItem('cartItems');
+    const serializedState = localStorage.getItem("cartItems");
     if (serializedState === null) {
       return [];
     }
     const parsedItems: (Product | CartItem)[] = JSON.parse(serializedState);
-    // Ensure every item has a quantity property for backward compatibility
-    return parsedItems.map(item => {
-      if ('quantity' in item && typeof item.quantity === 'number') {
+    return parsedItems.map((item) => {
+      if ("quantity" in item && typeof item.quantity === "number") {
         return item as CartItem;
       }
       return { ...item, quantity: 1 };
@@ -34,11 +33,13 @@ const initialState: CartState = {
 };
 
 const cartSlice = createSlice({
-  name: 'cart',
+  name: "cart",
   initialState,
   reducers: {
     addToCart: (state, action: PayloadAction<Product>) => {
-      const existingIndex = state.items.findIndex(item => item.id === action.payload.id);
+      const existingIndex = state.items.findIndex(
+        (item) => item.id === action.payload.id
+      );
       if (existingIndex >= 0) {
         state.items[existingIndex].quantity++;
       } else {
@@ -46,31 +47,38 @@ const cartSlice = createSlice({
       }
     },
     removeFromCart: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter(item => item.id !== action.payload);
+      state.items = state.items.filter((item) => item.id !== action.payload);
     },
     increaseQuantity: (state, action: PayloadAction<string>) => {
-      const item = state.items.find(item => item.id === action.payload);
+      const item = state.items.find((item) => item.id === action.payload);
       if (item) {
         item.quantity++;
       }
     },
     decreaseQuantity: (state, action: PayloadAction<string>) => {
-      const itemIndex = state.items.findIndex(item => item.id === action.payload);
+      const itemIndex = state.items.findIndex(
+        (item) => item.id === action.payload
+      );
       if (itemIndex >= 0) {
         const item = state.items[itemIndex];
         if (item.quantity > 1) {
           item.quantity--;
         } else {
-          // Remove the item if quantity is 1 and it's decreased
           state.items.splice(itemIndex, 1);
         }
       }
     },
     clearCart: (state) => {
       state.items = [];
-    }
+    },
   },
 });
 
-export const { addToCart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } = cartSlice.actions;
+export const {
+  addToCart,
+  removeFromCart,
+  increaseQuantity,
+  decreaseQuantity,
+  clearCart,
+} = cartSlice.actions;
 export default cartSlice.reducer;

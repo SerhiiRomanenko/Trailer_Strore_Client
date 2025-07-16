@@ -156,7 +156,6 @@ const HomePage: React.FC = () => {
       </div>
 
       <div className="flex gap-8">
-        {/* Mobile Filters */}
         <div
           className={`fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity lg:hidden ${
             isFiltersOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -187,7 +186,6 @@ const HomePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Desktop Filters */}
         <aside className="hidden lg:block w-1/4 xl:w-1/5">
           <div className="sticky top-28">
             <Filters

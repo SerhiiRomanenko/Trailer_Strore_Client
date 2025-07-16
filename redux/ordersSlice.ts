@@ -48,7 +48,6 @@ const initialState: OrdersState = {
   error: null,
 };
 
-// Thunks
 export const fetchMyOrders = createAsyncThunk(
   "orders/fetchMyOrders",
   async (_, { rejectWithValue }) => {
@@ -120,7 +119,6 @@ const ordersSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Fetch My/All Orders
       .addCase(fetchMyOrders.pending, (state) => {
         state.status = "loading";
       })
@@ -149,11 +147,9 @@ const ordersSlice = createSlice({
         state.status = "failed";
         state.error = action.payload as string;
       })
-      // Add Order
       .addCase(addOrder.fulfilled, (state, action: PayloadAction<Order>) => {
         state.list.unshift(action.payload);
       })
-      // Update Status
       .addCase(
         updateOrderStatus.fulfilled,
         (state, action: PayloadAction<Order>) => {

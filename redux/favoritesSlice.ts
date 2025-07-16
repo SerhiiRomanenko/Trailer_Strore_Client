@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface FavoritesState {
   ids: string[];
@@ -6,24 +6,27 @@ interface FavoritesState {
 
 const loadFromLocalStorage = (): string[] => {
   try {
-    const serializedState = localStorage.getItem('favoriteItems');
+    const serializedState = localStorage.getItem("favoriteItems");
     if (serializedState === null) {
       return [];
     }
     const parsed: unknown = JSON.parse(serializedState);
 
     if (!Array.isArray(parsed)) {
-        return [];
+      return [];
     }
 
-    // Legacy support: handle if old format (full objects) is stored
-    if (parsed.length > 0 && typeof parsed[0] === 'object' && parsed[0] !== null && 'id' in parsed[0]) {
-        return parsed.map(item => String((item as {id: unknown}).id));
+    if (
+      parsed.length > 0 &&
+      typeof parsed[0] === "object" &&
+      parsed[0] !== null &&
+      "id" in parsed[0]
+    ) {
+      return parsed.map((item) => String((item as { id: unknown }).id));
     }
-    
-    // Current format: array of strings
-    if (parsed.every(item => typeof item === 'string')) {
-        return parsed as string[];
+
+    if (parsed.every((item) => typeof item === "string")) {
+      return parsed as string[];
     }
 
     return [];
@@ -33,13 +36,12 @@ const loadFromLocalStorage = (): string[] => {
   }
 };
 
-
 const initialState: FavoritesState = {
   ids: loadFromLocalStorage(),
 };
 
 const favoritesSlice = createSlice({
-  name: 'favorites',
+  name: "favorites",
   initialState,
   reducers: {
     toggleFavorite: (state, action: PayloadAction<string>) => {

@@ -19,7 +19,6 @@ const DeliveryAndPaymentPage: React.FC = () => {
       </h1>
 
       <div className="space-y-10">
-        {/* Payment Section */}
         <div>
           <h2 className="text-2xl font-bold text-slate-800 mb-4">
             Способи оплати
@@ -63,7 +62,6 @@ const DeliveryAndPaymentPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Delivery Section */}
         <div>
           <h2 className="text-2xl font-bold text-slate-800 mb-4">
             Способи доставки

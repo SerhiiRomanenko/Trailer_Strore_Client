@@ -36,7 +36,6 @@ const Dashboard: React.FC = () => {
         Панель керування
       </h1>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard
           title="Загальний дохід"
@@ -64,7 +63,6 @@ const Dashboard: React.FC = () => {
         />
       </div>
 
-      {/* Recent Orders */}
       <div>
         <h2 className="text-2xl font-bold text-gray-800 mb-4">
           Останні замовлення

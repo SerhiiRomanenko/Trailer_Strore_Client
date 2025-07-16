@@ -13,7 +13,6 @@ const Footer: React.FC = () => {
     <footer className="bg-slate-900 text-slate-400 mt-16">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* About Section */}
           <div className="md:col-span-2">
             <h3 className="text-2xl font-bold text-white tracking-wider font-['Roboto_Slab'] mb-3">
               Trailers<span className="text-orange-500">.</span>
@@ -25,7 +24,6 @@ const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Navigation Links */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Навігація</h3>
             <ul className="space-y-2 text-sm">
@@ -77,7 +75,6 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Contact Info */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Контакти</h3>
             <div className="text-sm space-y-3">

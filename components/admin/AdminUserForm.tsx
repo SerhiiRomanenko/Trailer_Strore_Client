@@ -22,7 +22,6 @@ const AdminUserForm: React.FC<AdminUserFormProps> = ({ userId }) => {
   };
 
   useEffect(() => {
-    // Fetch users if not already populated
     if (users.length === 0) {
       fetchUsers();
     }

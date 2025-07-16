@@ -31,7 +31,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) => {
 
   useEffect(() => {
     if (product) {
-      // Update meta tags
       document.title = product.metaTitle;
 
       let descTag = document.querySelector('meta[name="description"]');
@@ -50,7 +49,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) => {
       }
       keywordsTag.setAttribute("content", product.keywords.join(", "));
 
-      // JSON-LD Structured Data
       const scriptId = "product-json-ld";
       let script = document.getElementById(
         scriptId
@@ -91,7 +89,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) => {
         },
       });
 
-      // Cleanup function to remove JSON-LD when component unmounts
       return () => {
         const scriptToRemove = document.getElementById(scriptId);
         if (scriptToRemove) {
@@ -132,7 +129,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) => {
   return (
     <div className="bg-white p-4 sm:p-8 rounded-xl shadow-lg border border-slate-200">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-        {/* Image Gallery */}
         <div>
           <div className="mb-4 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
             <img
@@ -164,7 +160,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) => {
           )}
         </div>
 
-        {/* Product Info */}
         <div className="flex flex-col">
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-2">
             {product.name}
@@ -217,7 +212,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug }) => {
         </div>
       </div>
 
-      {/* Description & Specifications */}
       <div className="mt-12 pt-8 border-t border-slate-200">
         <div className="border-b border-slate-200">
           <nav className="-mb-px flex gap-6" aria-label="Tabs">

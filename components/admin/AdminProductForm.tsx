@@ -170,7 +170,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      // @ts-ignore
       dispatch(addProduct(newProductData));
     }
     navigate(
@@ -190,7 +189,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         onSubmit={handleSubmit}
         className="space-y-8 bg-white p-8 rounded-lg shadow-sm border border-gray-200"
       >
-        {/* Main Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -270,7 +268,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
           </div>
         </div>
 
-        {/* Descriptions */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Короткий опис
@@ -296,7 +293,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
           ></textarea>
         </div>
 
-        {/* Images */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Зображення
@@ -333,7 +329,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
           </Button>
         </div>
 
-        {/* Specifications */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Специфікації
@@ -384,7 +379,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
           </Button>
         </div>
 
-        {/* SEO and Flags */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700">
